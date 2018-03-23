@@ -313,8 +313,9 @@ func doesPermissionCodeExist (db *sql.DB, email string,
 	permissioncode string) bool {
 	userRows, errSelect := db.Query(
 		"select count(*) from emailpermissioncodes " +
-			"where email = $1 and permissioncode = $2",
-			email, permissioncode)
+			"where (email = $1 and permissioncode = $2) or " +
+			"(email = '*' and permissioncode = $3)",
+			email, permissioncode, permissioncode)
 
 	if errSelect != nil {
 		log.Println("Selection from emailpermissioncodes " +
