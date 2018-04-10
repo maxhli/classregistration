@@ -1,64 +1,46 @@
-<nav class="navbar navbar-default navbar-static-top navbar-inverse">
-  <div class="container">
-    <ul class="nav navbar-nav">
-      <li class="active">
-        <a href="/"><span class="glyphicon glyphicon-home"></span>Home</a>
-      </li>
-      <li>
-        <a href="http://brentwoodcoding.ddns.net">
-          <span class="glyphicon glyphicon-user"></span> Brentwood Coding</a>
-      </li>
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-            <span class="glyphicon glyphicon-info-sign">
-            </span>Brentwood Coding<span class="caret">
-        </span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="http://brentwoodcoding.ddns.net">
-                Brentwood Coding</a>
-            </li>
-              <li><a href="http://brentwoodcoding.ddns.net">
-                  Brentwood Coding</a>
-              </li>
-              <li><a href="http://brentwoodcoding.ddns.net">
-                  Brentwood Coding</a>
-              </li>
-              <li><a href="http://brentwoodcoding.ddns.net">
-                  Brentwood Coding</a>
-              </li>
-          </ul>
-      </li>
-    </ul>
-      <ul class="nav navbar-nav pull-right">
+<ul class="nav nav-pills nav-fill bg-dark">
+    <li class="nav-item">
+        <a class="nav-link active" href="/">Home
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class = "nav-link"
+           href="http://brentwoodcoding.ddns.net">
+    <span class="ion-ios-person" data-pack="ios" data-tags="users, staff, head, human">
 
-          {{ if .Anonymous}}
-          <li>
-              <a id=""
-                 class="fontsize125p navbar-onlinetraces"
-                 href="/accounts/create/">Sign Up</a>
-          </li>
-          <li>
-          <a id=""
-             class="fontsize125p navbar-onlinetraces"
-             href="/accounts/login/">Login</a>
-      </li>
+    </span>
+    Brentwood Coding
+        </a>
+    </li>
 
-       {{end }}
+    {{ if .Anonymous}}
+        <li class="nav-item">
+            <a class = "nav-link"
+               class="fontsize125p navbar-onlinetraces"
+               href="/accounts/create/">Sign Up</a>
+        </li>
+        <li class="nav-item">
+            <a class = "nav-link"
+               class="fontsize125p navbar-onlinetraces"
+               href="/accounts/login/">Login</a>
+        </li>
 
-        {{ if .Authenticated}}
+    {{end }}
 
-        <li>
-            <a style="font-size:200%; color:red;"
+    {{ if .Authenticated}}
+
+        <li class="nav-item">
+            <a class = "nav-link"
+               style="color:red;"
                href="#">{{.Username}}</a>
         </li>
-            <li>
-                <a id=""
-                   class="fontsize125p navbar-onlinetraces"
-                   href="/accounts/logout/">Logout</a>
-            </li>
+        <li class="nav-item">
+            <a class = "nav-link"
+               class="fontsize125p navbar-onlinetraces"
+               href="/accounts/logout/">Logout</a>
+        </li>
 
-        {{end}}
+    {{end}}
 
-      </ul>
-  </div>
-</nav>
+</ul>
+
