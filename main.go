@@ -118,6 +118,74 @@ func checkErr(err error) {
 	}
 }
 
+func deleteAWSS3File(regionName string, bucket string,
+	pictureURL string)(error) {
+
+	bucketPrefix := "https://s3." + regionName +
+		".amazonaws.com/" + bucket + "/"
+
+	i := len(bucketPrefix)
+	keyString := pictureURL[i:]
+
+	fmt.Println("keyString inside deleteAWSS3File is: " +
+		keyString)
+
+	AWS_ACCESS_KEY_ID :=
+		os.Getenv("AWS-ACCESS-KEY-ID")
+	AWS_SECRET_ACCESS_KEY :=
+		os.Getenv("AWS-SECRET-ACCESS-KEY")
+
+	token := ""
+	creds := credentials.NewStaticCredentials(
+		AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, token)
+
+	_, errCred := creds.Get()
+	if errCred != nil {
+		log.Fatal(errCred)
+	}
+
+	sessionAWS := session.Must(session.NewSession(
+			&aws.Config{
+				Region: aws.String(endpoints.UsEast2RegionID),
+				Credentials: creds,
+			}))
+
+
+	svc := s3.New(sessionAWS)
+
+	input := &s3.DeleteObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(keyString),
+	}
+
+	_, err := svc.DeleteObject(input)
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			default:
+				return errors.New("Error message: " +
+					aerr.Error())
+			}
+		} else {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			return errors.New("Error message: " + err.Error())
+		}
+	}
+
+	err = svc.WaitUntilObjectNotExists(
+		&s3.HeadObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(keyString),
+	})
+	if err != nil {
+		errors.New("Error occurred while "  +
+			" waiting for object " +  keyString +
+			" to be deleted from AWS S3 bucket " + bucket)
+	}
+	return nil
+	}
+
 func uploadAFile(c *gin.Context) (string, string, error) {
 		// single file
 		file, _ := c.FormFile("file")
@@ -585,7 +653,35 @@ func main() {
 		checkAuth(c)
 		ID := c.Param("id")
 
-		// Update
+		rows, err := db.Query("SELECT ID, ChineseName, EnglishName, " +
+			"Email, CellPhone, Street, City, State, zip, " +
+			"ShortPixName, PictureURL FROM members where ID = $1", ID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		member := new(Member)
+
+		for rows.Next() {
+			err := rows.Scan(&member.ID, &member.ChineseName,
+				&member.EnglishName, &member.Email,
+				&member.CellPhone, &member.Street,
+				&member.City, &member.State,
+				&member.Zip, &member.ShortPixName,
+				&member.PictureURL)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		err0 := deleteAWSS3File(
+			"us-east-2", "ithreeman",
+		member.PictureURL)
+
+		checkErr(err0)
+
+		// delete
 		stmt, err := db.Prepare(
 			"delete from Members where ID=$1")
 		checkErr(err)
