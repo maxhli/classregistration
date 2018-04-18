@@ -39,3 +39,8 @@
   width: 20%;
   text-align:right;
 }
+
+ul li a:hover {
+  color: #000;
+  background-color: #fff;
+}
