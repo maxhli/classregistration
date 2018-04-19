@@ -34,7 +34,8 @@
                 <h3 class="text-center">Use this form to update a member.
                     Clicking on "Back to the main page" does not update anything.</h3>
             </div>
-            <form action="/members/update/{{.ID}}" method="post">
+            <form action="/members/update/{{.ID}}"
+                  method="post" enctype="multipart/form-data">
                 <div>
 
         <span class="right20percent">
@@ -92,7 +93,38 @@
                     <span class="helptext">Reason for attending</span>
                 </div>
 
+                <div style="margin-top:10px">
+                <span class="right20percent">
+            <label for="file" class="floating-box">
+                Picture URL:
+            </label>
+        </span>
+                    <input id="id_file"
+                           name="file" type="file" placeholder="Picture/scanned image here" required/>
+                    <span class="helptext">Your picture.
+        </span>
 
+                </div>
+
+                <div>
+                    <label for="id_ShortPixName" class="floating-box">
+                        Original Picture. Warning: If the
+                        file name of the chosen picture is the
+                        same as the old one. The system will NOT
+                        update the picture. Be aware!
+                    </label>
+                    <input id="id_ShortPixName" maxlength="255"
+                           name="ShortPictureName"
+                           type="text" value="{{.ShortPixName}}"
+                    readonly/>
+                </div>
+
+                <div>
+                    <input id="id_PictureURL" maxlength="255"
+                           name="PictureURL" type="text"
+                           value="{{.PictureURL}}"
+                           hidden/>
+                </div>
                 <div>
         <span class="right20percent">
             <input type="submit" value="Save" />

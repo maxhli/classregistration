@@ -14,9 +14,6 @@ import (
 
 	_ "github.com/lib/pq"
 
-	//"github.com/jinzhu/gorm"
-	//_ "github.com/jinzhu/gorm/dialects/postgres"
-
 	"github.com/gin-gonic/gin"
 	"fmt"
 
@@ -188,6 +185,7 @@ func deleteAWSS3File(regionName string, bucket string,
 
 func uploadAFile(c *gin.Context) (string, string, error) {
 		// single file
+
 		file, _ := c.FormFile("file")
 		log.Println("The file name is: ", file.Filename)
 
@@ -588,6 +586,8 @@ func main() {
 		checkAuth(c)
 		ID := c.Param("id")
 
+		newShortPixName := ""
+		newPictureURL := ""
 
 		IDNumber, err1 := strconv.Atoi(ID)
 		checkErr(err1)
@@ -602,6 +602,23 @@ func main() {
 		Zip := c.PostForm("Zip")
 
 
+		ShortPictureName := c.PostForm("ShortPictureName")
+		PictureURL := c.PostForm("PictureURL")
+
+		file, _ := c.FormFile("file")
+		fileName := file.Filename
+
+		log.Println("The file name is: ", fileName)
+
+		if ShortPictureName == fileName {
+			fmt.Println("Since the new file name is the same " +
+				"as the old one. No update is necessary.")
+		} else {
+			deleteAWSS3File("us-east-2",
+				"ithreeman", PictureURL)
+			newShortPixName, newPictureURL, _ = uploadAFile(c)
+		}
+
 		DistanceFromChurch := c.PostForm("DistanceFromChurch")
 
 		// Update
@@ -610,16 +627,21 @@ func main() {
 				"Email = $3, CellPhone = $4, " +
 		        "Street = $5, City = $6, " +
 		        "State = $7, Zip = $8, " +
-		        "DistanceFromChurch = $9 where ID=$10")
+		        "DistanceFromChurch = $9, " +
+				"ShortPixName = $10, " +
+				"PictureURL = $11 where ID=$12")
 		checkErr(err)
 		fmt.Println("update statement is: ", stmt)
 
 		val, err := strconv.ParseFloat(DistanceFromChurch, 32)
 
-		fmt.Println("EnglishName, ChineseName, val, ID are: ", EnglishName, ChineseName, val, ID)
+		fmt.Println("EnglishName, ChineseName, val, ID are: ",
+			EnglishName, ChineseName, val, ID)
 
-		res, err2 := stmt.Exec(EnglishName, ChineseName, Email, CellPhone,
-			Street, City, State, Zip, val, IDNumber)
+		res, err2 := stmt.Exec(EnglishName, ChineseName,
+			Email, CellPhone,
+			Street, City, State, Zip, val,
+			newShortPixName, newPictureURL, IDNumber)
 
 		checkErr(err2)
 		defer stmt.Close()
