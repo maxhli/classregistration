@@ -99,19 +99,22 @@
                 Picture URL:
             </label>
         </span>
-                    <input id="id_file"
-                           name="file" type="file" placeholder="Picture/scanned image here" required/>
-                    <span class="helptext">Your picture.
+                    <span class="right20percent">
+            <label for="id_file">NEW picture</label>
         </span>
+            <input id="id_file"
+                   name="file" type="file"
+                   placeholder="Picture/scanned image here"
+                   required/>
 
                 </div>
 
                 <div>
                     <label for="id_ShortPixName" class="floating-box">
-                        Original Picture. Warning: If the
+                        OLD Picture. Warning: If the
                         file name of the chosen picture is the
                         same as the old one. The system will NOT
-                        update the picture. Be aware!
+                        update the picture.
                     </label>
                     <input id="id_ShortPixName" maxlength="255"
                            name="ShortPictureName"
